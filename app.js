@@ -42,8 +42,12 @@ app.get("/callback", async (req, res) => {
       },
     }
   )
-    console.log(data.data);
   
+  for (let artist of data.data.items) {
+    console.log(artist.name);
+  }
+  
+
 })
 
 
