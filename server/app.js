@@ -4,9 +4,6 @@ const app = express();
 require('dotenv').config();
 
 const PORT = process.env.PORT || 3000;
-const cli_id = process.env.CLIENT_ID;
-const cli_sec = process.env.CLIENT_SECRET;
-const rediruri = process.env.REDIRECTURI;
 
 app.use(cookieParser());
 
@@ -16,6 +13,7 @@ let axios = require("axios");
 let queryString = require("querystring");
 
 app.get("/", (req,res) => {
+  res.cookie('name', 'express');
   res.send("Server is up and running!");
 })
 
@@ -33,29 +31,20 @@ app.get("/callback", async (req, res) => {
         "Content-Type": "application/x-www-form-urlencoded",
       },
     }
-
-    // send JSON over
-    
   );
-})
 
+  const access_token = spotifyRes.data.access_token;
+  const refresh_token = spotifyRes.data.refresh_token;
+  const maxAge = spotifyRes.data.expires_in;
+  const expiration = new Date(Number(new Data()) + (maxAge * 1000));
+  
+  res.cookie('token', spotifyRes.data.access_token, { expires: expiration, httpOnly: true});
+  res.cookie('refresh', refresh_token);
+  
+  //res.json({ access_token: spotifyRes.data.access_token });
+  res.redirect("/");
+})
 
 app.listen(PORT, () => {
   console.log("App is listening on port 3000");
 });
-
-
-/* // get access token through spotifyRes.data.acess_token
-const data = await axios.get(
-  "https://api.spotify.com/v1/me/top/artists?limit=5",
-  {
-    headers: {
-      Authorization: "Bearer " + spotifyRes.data.access_token,
-    },
-  }
-)
-
-//res.json({"access_token": [spotifyRes.data.access_token]});
-for (let artist of data.data.items) {
-  console.log(artist.name);
-} */

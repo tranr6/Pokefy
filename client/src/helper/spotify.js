@@ -1,6 +1,5 @@
 import axios from 'axios';
 
-
 // data = getTopArtists(spotifyRes.data.access_token, timeRange);
 // data.data.items.name
 export function getTopArtists(access_token, timeRange) {
