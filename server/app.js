@@ -17,6 +17,7 @@ app.get("/", (req,res) => {
   res.send("Server is up and running!");
 })
 
+
 app.get("/callback", async (req, res) => {
   const spotifyRes = await axios.post(
     "https://accounts.spotify.com/api/token",
@@ -36,13 +37,32 @@ app.get("/callback", async (req, res) => {
   const access_token = spotifyRes.data.access_token;
   const refresh_token = spotifyRes.data.refresh_token;
   const maxAge = spotifyRes.data.expires_in;
-  const expiration = new Date(Number(new Data()) + (maxAge * 1000));
+  const expiration = new Date(Number(new Date()) + (maxAge * 1000));
   
-  res.cookie('token', spotifyRes.data.access_token, { expires: expiration, httpOnly: true});
+  res.cookie('token', access_token, { expires: expiration, httpOnly: false});
   res.cookie('refresh', refresh_token);
-  
-  //res.json({ access_token: spotifyRes.data.access_token });
   res.redirect("/");
+})
+
+app.get('/refresh', async (req, res) => {
+  const spotifyRes = await axios.post(
+    "https://accounts.spotify.com/api/token",
+    queryString.stringify({
+      refresh_token: refreshToken,
+      grant_type: 'refresh_token',
+    }),
+    {
+      headers: {
+        Authorization: "Basic " + process.env.BASE64_AUTHORIZATION
+      },
+    }
+  );
+  const access_token = spotifyRes.data.access_token;
+  const maxAge = spotifyRes.data.expires_in;
+  const expiration = new Date(Number(new Date()) + (maxAge * 1000));
+  
+  res.cookie('token', access_token, { expires: expiration, httpOnly: false});
+  res.send({access_token, type: 'refresh'});
 })
 
 app.listen(PORT, () => {
