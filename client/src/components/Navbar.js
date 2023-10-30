@@ -1,13 +1,13 @@
-import About from '../sections/About.js';
 import React from 'react'
-import { css } from '@emotion/react';
+import { Link } from 'react-router-dom';
 
 function NavBar() {
     return (
         <div>
             <ul>
-                <li>Home</li>
-                <li>About</li>
+                <li><Link to='/'>Home</Link></li>
+                <li><Link to='/about'>About</Link></li>
+                
             </ul>
         </div>
     );

@@ -1,26 +1,22 @@
 import React from 'react';
-import { Route } from 'react-router-dom';
-import artistTypes from './artistTypes.js';
-// When user signs in, we redirect to this page. 
-// Returns Topartist here
+import { Routes, Route } from 'react-router-dom';
+import ArtistTypes from './ArtistTypes';
+import About from './About.js';
 export default class Main extends React.Component{
     render() {
         const token = this.props;
       
-      
-    return (
-        <main>
-            <Route exact path='/' render={(props) =>
-                <artistTypes token={token} {...props}/>
-            }/>
-            <h1> HOOSE YOUR TEAM.</h1>
-            <p>PAIR YOUR FAVORITE SPOTIFY ARTISTS WITH THEIR POKEMON TYPES</p>
-        </main>
-    )
+        return (
+            <main>
+                <Routes>
+                    <Route exact path='/' element={<ArtistTypes token={token}/>}></Route>
+                    <Route path='/about' element={<About />} />
+                </Routes>
+            </main>
+        )
 
-    };
-  
-  }
+    }
+  };
   
   
   
