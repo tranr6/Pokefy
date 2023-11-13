@@ -11,7 +11,7 @@ export default class ArtistTypes extends React.Component {
             {return <Home/>}
         // Proceed to ArtistTypes
         else {
-            content =  <div><h1>HELLO</h1></div>
+            content =  <h1>HELLO</h1>
         }
         
         return (

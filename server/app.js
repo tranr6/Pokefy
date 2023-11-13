@@ -1,11 +1,13 @@
 const express = require("express");
 const cookieParser = require('cookie-parser');
+const path = require('path');
 const app = express();
 require('dotenv').config();
 
 const PORT = process.env.PORT || 3000;
 
 app.use(cookieParser());
+app.use(express.static(path.join(__dirname, '../client/build')));
 
 //this is the page user is redirected to after accepting data use on spotify's website
 //it does not have to be /account, it can be whatever page you want it to be
@@ -13,8 +15,7 @@ let axios = require("axios");
 let queryString = require("querystring");
 
 app.get("/", (req,res) => {
-  res.cookie('name', 'express');
-  res.send("Server is up and running!");
+  res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
 })
 
 
@@ -63,6 +64,12 @@ app.get('/refresh', async (req, res) => {
   
   res.cookie('token', access_token, { expires: expiration, httpOnly: false});
   res.send({access_token, type: 'refresh'});
+})
+
+app.get('/api/log-out', (req, res) => {
+    res.clearCookie('token');
+    res.clearCookie('refresh');
+    res.redirect("/");
 })
 
 app.listen(PORT, () => {
