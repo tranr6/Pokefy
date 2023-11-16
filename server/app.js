@@ -6,6 +6,11 @@ require('dotenv').config();
 
 const PORT = process.env.PORT || 3000;
 
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  next();
+});
+
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, '../client/build')));
 
@@ -13,11 +18,6 @@ app.use(express.static(path.join(__dirname, '../client/build')));
 //it does not have to be /account, it can be whatever page you want it to be
 let axios = require("axios");
 let queryString = require("querystring");
-
-app.get("/", (req,res) => {
-  res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
-})
-
 
 app.get("/callback", async (req, res) => {
   const spotifyRes = await axios.post(
@@ -39,8 +39,8 @@ app.get("/callback", async (req, res) => {
   const refresh_token = spotifyRes.data.refresh_token;
   const maxAge = spotifyRes.data.expires_in;
   const expiration = new Date(Number(new Date()) + (maxAge * 1000));
-  
-  res.cookie('token', access_token, { expires: expiration, httpOnly: false});
+
+  res.cookie('token', access_token, { expires: expiration, httpOnly: false });
   res.cookie('refresh', refresh_token);
   res.redirect("/");
 })
@@ -61,15 +61,20 @@ app.get('/refresh', async (req, res) => {
   const access_token = spotifyRes.data.access_token;
   const maxAge = spotifyRes.data.expires_in;
   const expiration = new Date(Number(new Date()) + (maxAge * 1000));
-  
-  res.cookie('token', access_token, { expires: expiration, httpOnly: false});
-  res.send({access_token, type: 'refresh'});
+
+  res.cookie('token', access_token, { expires: expiration, httpOnly: false });
+  res.send({ access_token, type: 'refresh' });
 })
 
 app.get('/api/log-out', (req, res) => {
-    res.clearCookie('token');
-    res.clearCookie('refresh');
-    res.redirect("/");
+  res.clearCookie('token');
+  res.clearCookie('refresh');
+  res.redirect("/");
+})
+
+
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
 })
 
 app.listen(PORT, () => {

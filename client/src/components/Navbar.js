@@ -2,17 +2,21 @@ import React from 'react'
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 
-
 function NavBar({ loggedIn }) {
     const handleLogout = async () => {
-        await axios.get(
-            'http://localhost:3000/api/log-out', 
-            {}, 
-            {withCredentials: true}).catch((err) => {
-                console.log(err);
+        await axios.post('http://localhost:3000/api/log-out')
+            .then(response => {
+                if (response.status === 200) {
+                    window.location.href = "/";
+                } else {
+                    console.log("Logout failed:", response.statusText);
+                }
+            })
+            .catch((err) => {
+                console.log("" + err);
             })
     };
-    
+
     return (
         <div>
             <ul>

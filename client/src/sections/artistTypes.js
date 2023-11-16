@@ -1,5 +1,6 @@
 import React from "react";
 import Home from './Home.js';
+//import { timeRangeFilters } from "../constants/filter.js";
 
 export default class ArtistTypes extends React.Component {
    
@@ -11,7 +12,15 @@ export default class ArtistTypes extends React.Component {
             {return <Home/>}
         // Proceed to ArtistTypes
         else {
-            content =  <h1>HELLO</h1>
+            content =
+                <div>
+                    <h1>Select your team!</h1>
+                    <div>
+                        <button>Last Month</button>
+                        <button>Last 6 Months</button>
+                        <button>All Time</button>
+                    </div>
+                </div>
         }
         
         return (
