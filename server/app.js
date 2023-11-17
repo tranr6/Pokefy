@@ -2,9 +2,12 @@ const express = require("express");
 const cookieParser = require("cookie-parser");
 const path = require("path");
 const app = express();
+
 require("dotenv").config();
 
 const PORT = process.env.PORT || 3000;
+
+const isProduction = process.env.NODE_ENV !== "development";
 
 app.use(cookieParser());
 
@@ -18,34 +21,61 @@ app.use(cookieParser());
  */
 app.use(express.static(path.join(__dirname, "../client/build")));
 
-//this is the page user is redirected to after accepting data use on spotify's website
-//it does not have to be /account, it can be whatever page you want it to be
 let axios = require("axios");
 let queryString = require("querystring");
 
+//this is the page user is redirected to after accepting data use on spotify's website
+//it does not have to be /account, it can be whatever page you want it to be
 app.get("/callback", async (req, res) => {
-  const spotifyRes = await axios.post(
-    "https://accounts.spotify.com/api/token",
-    queryString.stringify({
-      grant_type: "authorization_code",
-      code: req.query.code,
-      redirect_uri: "http://localhost:3000/callback/",
-    }),
-    {
-      headers: {
-        Authorization: "Basic " + process.env.BASE64_AUTHORIZATION,
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-    }
-  );
+  try {
+    const spotifyRes = await axios.post(
+      "https://accounts.spotify.com/api/token",
+      queryString.stringify({
+        grant_type: "authorization_code",
+        code: req.query.code,
 
-  const access_token = spotifyRes.data.access_token;
-  const refresh_token = spotifyRes.data.refresh_token;
-  const maxAge = spotifyRes.data.expires_in;
-  const expiration = new Date(Number(new Date()) + maxAge * 1000);
+        /**
+         * This parameter is used for validation only (there is no actual redirection).
+         * The value of this parameter must exactly match the value of redirect_uri supplied
+         * when requesting the authorization code.
+         */
+        redirect_uri: `${
+          isProduction
+            ? process.env.PRODUCTION_BASE_URL
+            : process.env.DEV_BASE_URL
+        }/callback`,
+      }),
+      {
+        headers: {
+          /**
+           * Spotify requires the format to be Authorization: Basic <base64 encoded client_id: client_secret>
+           * For example:
+           * 'MTIzNDU2Nzg6YWJjZGVmZw==' is the base64 encoded output of the string 12345678:abcdefg
+           * (where 12345678 is the client id and abcdefg the client secret).
+           */
+          Authorization: `Basic ${Buffer.from(
+            `${process.env.SPOTIFY_CLIENT_ID}:${process.env.BASE64_AUTHORIZATION}`,
+            "utf8"
+          ).toString("base64")}`,
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      }
+    );
 
-  res.cookie("token", access_token, { expires: expiration, httpOnly: false });
-  res.cookie("refresh", refresh_token);
+    const access_token = spotifyRes.data.access_token;
+    const refresh_token = spotifyRes.data.refresh_token;
+    const maxAge = spotifyRes.data.expires_in;
+    const expiration = new Date(Number(new Date()) + maxAge * 1000);
+
+    res.cookie("token", access_token, {
+      expires: expiration,
+      httpOnly: false,
+    });
+    res.cookie("refresh", refresh_token);
+  } catch (error) {
+    console.log("there was an error", error);
+  }
+
   res.redirect("/");
 });
 
@@ -70,7 +100,7 @@ app.get("/refresh", async (req, res) => {
   res.send({ access_token, type: "refresh" });
 });
 
-app.get("/api/log-out", (req, res) => {
+app.post("/api/log-out", (req, res) => {
   res.clearCookie("token");
   res.clearCookie("refresh");
   res.redirect("/");
@@ -80,8 +110,9 @@ app.get("/api/log-out", (req, res) => {
 // adding /* will make it so that any route that is not defined will be redirected to the index.html file
 // so that react router can handle directing the user to the correct client side route
 // an alternative to /* is to pass an array of paths to app.get such as app.get(["/login", "/callback"], (req, res) => {...})
+
 app.get("/*", (req, res) => {
-  res.sendFile(path.join(__dirname, "client/build", "index.html"));
+  res.sendFile(path.join(__dirname, "../client/build", "index.html"));
 });
 
 app.listen(PORT, () => {
