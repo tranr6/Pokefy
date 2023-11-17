@@ -6,11 +6,6 @@ require("dotenv").config();
 
 const PORT = process.env.PORT || 3000;
 
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  next();
-});
-
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "../client/build")));
 
