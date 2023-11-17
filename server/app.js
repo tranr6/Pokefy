@@ -7,6 +7,15 @@ require("dotenv").config();
 const PORT = process.env.PORT || 3000;
 
 app.use(cookieParser());
+
+/**
+ * This line sets up a middleware to serve static files from the "client/build" directory.
+ * This is useful for serving your front-end assets (HTML, CSS, JavaScript, images, etc.) directly from the server.
+ * For example if you have an image in your client/build/images folder called logo.png,
+ * you can access it from your index.html file by using <img src="/images/logo.png" />.
+ * This is useful because you don't have to worry about setting up a separate server to serve your front-end assets.
+ * You can just use the same server that you use for your backend.
+ */
 app.use(express.static(path.join(__dirname, "../client/build")));
 
 //this is the page user is redirected to after accepting data use on spotify's website
@@ -67,6 +76,7 @@ app.get("/api/log-out", (req, res) => {
   res.redirect("/");
 });
 
+// catch-all route:
 // adding /* will make it so that any route that is not defined will be redirected to the index.html file
 // so that react router can handle directing the user to the correct client side route
 // an alternative to /* is to pass an array of paths to app.get such as app.get(["/login", "/callback"], (req, res) => {...})
