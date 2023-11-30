@@ -9,17 +9,41 @@ export default class ArtistTypes extends React.Component {
         super();
         this.state = {
             timeRange: '',
+            artistsInfo:[]
         }
         this.handleClick = this.handleClick.bind(this);
+        this.setTopArtists = this.setTopArtists.bind(this);
     }
     handleClick(value) {
-        console.log(value)
         this.setState({ timeRange: value }, () => {
+            this.setTopArtists(this.state.timeRange);
         });
+        
+        
         // once clicked we will take the value (timeframe) and make API call
     }
+
+    async setTopArtists(timeRange) {
+        const response = await getTopArtists(this.props.token, timeRange);
+        const { data: { items } } = response;
+        this.setState({ artistsInfo: items.map(item => ({
+            name: item.name,
+            genre: item.genres[0],
+            imgURI: item.images[2].url
+        }))}, () => {
+            console.log(this.state.artistsInfo);
+        });
+       
+    }
+
+
+
+
+
+
     render() {
         const { token } = this.props;
+        
         let content;
         // If we don't have a token, return to home
         if (token.token === '') { return <Home /> }
@@ -29,7 +53,6 @@ export default class ArtistTypes extends React.Component {
                 <div>
                     <h1>Select your team!</h1>
                     {Object.keys(timeRangeFilters).map(key => {
-                        console.log(key);
                         return <SelectOptions
                             key={key}
                             value={key}

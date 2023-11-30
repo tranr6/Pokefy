@@ -1,12 +1,14 @@
 import React from "react";
 
 const LoginButton = (props) => {
+  
   const authLink = "http://accounts.spotify.com/authorize";
   const redirectURI =
     process.env.NODE_ENV === "development"
       ? process.env.REACT_APP_DEV_REDIRECTURI
       : process.env.REACT_APP_REDIRECTURI;
   const clientID = process.env.REACT_APP_CLIENT_ID;
+  console.log(clientID);
   const scope = "user-top-read";
   const responseType = "code";
 

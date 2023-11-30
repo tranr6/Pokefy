@@ -1,11 +1,12 @@
 import axios from 'axios';
 
-// data = getTopArtists(spotifyRes.data.access_token, timeRange);
-// data.data.items.name
 export function getTopArtists(access_token, timeRange) {
-    var tRange = timeRange || "medium_term";
+    let token = access_token.token;
+    let tRange = timeRange || "medium_term";
+    
     const config = { headers: { 
-        'Authorization': "Bearer " + access_token
+        'Authorization': 'Bearer ' + token
     }};
+
     return axios.get(`https://api.spotify.com/v1/me/top/artists?limit=6&time_range=${tRange}`, config);
 }

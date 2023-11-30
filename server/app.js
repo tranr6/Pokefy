@@ -43,7 +43,7 @@ app.get("/callback", async (req, res) => {
           isProduction
             ? process.env.PRODUCTION_BASE_URL
             : process.env.DEV_BASE_URL
-        }/callback`,
+        }/callback/`,
       }),
       {
         headers: {
@@ -54,13 +54,14 @@ app.get("/callback", async (req, res) => {
            * (where 12345678 is the client id and abcdefg the client secret).
            */
           Authorization: `Basic ${Buffer.from(
-            `${process.env.SPOTIFY_CLIENT_ID}:${process.env.BASE64_AUTHORIZATION}`,
+            `${process.env.SPOTIFY_CLIENT_ID}:${process.env.CLIENT_SECRET}`,
             "utf8"
           ).toString("base64")}`,
           "Content-Type": "application/x-www-form-urlencoded",
         },
       }
     );
+
 
     const access_token = spotifyRes.data.access_token;
     const refresh_token = spotifyRes.data.refresh_token;
