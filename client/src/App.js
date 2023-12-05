@@ -37,6 +37,7 @@ export default class App extends React.Component {
 
   render() {
     const token = this.state.token;
+    console.log(token);
     return (
       <div>
         <NavBar loggedIn={token ? true : false} />

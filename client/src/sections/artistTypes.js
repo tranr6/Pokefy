@@ -3,55 +3,64 @@ import Home from './Home.js';
 import SelectOptions from "../components/Options.js";
 import { timeRangeFilters } from "../constants/filter.js";
 import { getTopArtists } from "../helper/spotify.js";
+import DisplayModal  from "../components/DisplayModal.js"
 
 export default class ArtistTypes extends React.Component {
     constructor() {
         super();
         this.state = {
             timeRange: '',
-            artistsInfo:[]
+            artistsInfo: [],
+            displayModal: false
         }
         this.handleClick = this.handleClick.bind(this);
         this.setTopArtists = this.setTopArtists.bind(this);
     }
     handleClick(value) {
-        this.setState({ timeRange: value }, () => {
+        this.setState({ timeRange: value, displayModal: true }, () => {
             this.setTopArtists(this.state.timeRange);
         });
-        
-        
         // once clicked we will take the value (timeframe) and make API call
     }
 
     async setTopArtists(timeRange) {
+        // Checks if we have the artists saved in cookies
+        const cachedArtists = sessionStorage.getItem(`artists[${timeRange}]`);
+        // If we do, we will set the current state to that cache
+        if (cachedArtists) {
+            this.setState({ artistsInfo: JSON.parse(cachedArtists) });
+            return;
+        }
+        // else we will call API 
         const response = await getTopArtists(this.props.token, timeRange);
         const { data: { items } } = response;
-        this.setState({ artistsInfo: items.map(item => ({
-            name: item.name,
-            genre: item.genres[0],
-            imgURI: item.images[2].url
-        }))}, () => {
-            console.log(this.state.artistsInfo);
+        this.setState({
+            artistsInfo: items.map(item => ({
+                name: item.name,
+                genre: item.genres[0] ? item.genres[0] : null,
+                imgURI: item.images[2].url,
+                type: ""
+            }))
+        }, () => {
+            sessionStorage.setItem(`artists[${timeRange}]`, JSON.stringify(this.state.artistsInfo));
         });
-       
     }
 
-
-
-
-
-
     render() {
+        const {
+            artistsInfo,
+            displayModal
+        } = this.state;
+
         const { token } = this.props;
-        
-        let content;
         // If we don't have a token, return to home
         if (token.token === '') { return <Home /> }
         // Proceed to ArtistTypes
         else {
-            content =
+            return (
                 <div>
                     <h1>Select your team!</h1>
+                    {/* Displays the time range buttons */}
                     {Object.keys(timeRangeFilters).map(key => {
                         return <SelectOptions
                             key={key}
@@ -62,13 +71,16 @@ export default class ArtistTypes extends React.Component {
                         </SelectOptions>
                     })
                     }
+                    {
+                        displayModal ?
+                            <DisplayModal
+                                artistsInfo={artistsInfo}
+                            />
+                            :
+                            <h1>No Display!</h1>
+                    }
                 </div>
+            )
         }
-        return (
-            <div>
-                {content}
-            </div>
-        )
     }
 }
-   

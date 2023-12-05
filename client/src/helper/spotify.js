@@ -4,6 +4,8 @@ export function getTopArtists(access_token, timeRange) {
     let token = access_token.token;
     let tRange = timeRange || "medium_term";
     
+
+    
     const config = { headers: { 
         'Authorization': 'Bearer ' + token
     }};
