@@ -3,7 +3,7 @@ import Home from './Home.js';
 import SelectOptions from "../components/Options.js";
 import { timeRangeFilters } from "../constants/filter.js";
 import { getTopArtists } from "../helper/spotify.js";
-import DisplayModal  from "../components/DisplayModal.js"
+import PokemonTeam  from "../components/DisplayModal.js"
 
 export default class ArtistTypes extends React.Component {
     constructor() {
@@ -15,12 +15,18 @@ export default class ArtistTypes extends React.Component {
         }
         this.handleClick = this.handleClick.bind(this);
         this.setTopArtists = this.setTopArtists.bind(this);
+        this.onClose = this.onClose.bind(this);
     }
     handleClick(value) {
         this.setState({ timeRange: value, displayModal: true }, () => {
             this.setTopArtists(this.state.timeRange);
         });
         // once clicked we will take the value (timeframe) and make API call
+    }
+
+    onClose () {
+        console.log("HeI")
+        this.setState({displayModal: false});
     }
 
     async setTopArtists(timeRange) {
@@ -38,7 +44,7 @@ export default class ArtistTypes extends React.Component {
             artistsInfo: items.map(item => ({
                 name: item.name,
                 genre: item.genres[0] ? item.genres[0] : null,
-                imgURI: item.images[2].url,
+                imgURI: item.images[0].url,
                 type: ""
             }))
         }, () => {
@@ -73,11 +79,12 @@ export default class ArtistTypes extends React.Component {
                     }
                     {
                         displayModal ?
-                            <DisplayModal
-                                artistsInfo={artistsInfo}
-                            />
+                            <div>
+                                <PokemonTeam artistsInfo={artistsInfo}/>
+                                <button onClick={this.onClose}>CLOSE</button>
+                            </div>
                             :
-                            <h1>No Display!</h1>
+                            null
                     }
                 </div>
             )

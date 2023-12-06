@@ -38,7 +38,7 @@ export default class SelectOptions extends Component {
             <div>
                 <img src={renderImg(value)} alt={value}/>
                 <Link
-                    to={`?time-range=${value}`}
+                    //to={`?time-range=${value}`}
                     onClick={this.handleClick}
                 >
                     {children}
