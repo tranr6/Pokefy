@@ -6,7 +6,7 @@ export default class PokemonTeam extends Component {
 
     // Function that adds the corresponding types to each artists
     pairGenreTypes(artistsInfo) {
-        artistsInfo.map((artist) => {
+        artistsInfo.forEach((artist) => {
             if (artist.genre == null) {
                 artist.type = "Normal"
             }
