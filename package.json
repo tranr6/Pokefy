@@ -4,6 +4,7 @@
     "client:start": "cd client && npm run start",
     "dev:server": "cross-env NODE_ENV=development nodemon --inspect ./server/app.js  --ignore './client/build/*'",
     "dev:start": "npm install && cd client && npm install && cd .. && concurrently --kill-others-on-fail \"npm run dev:server\" \"npm run client:start\""
+   
   },
   "dependencies": {
     "axios": "^1.5.1",
