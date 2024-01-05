@@ -1224,7 +1224,7 @@ export const genreTypes = {
     "noise rock": "Rock",
     "thai indie rock": "Rock",
     "barnsagor": "Fairy",
-    "k-indie": "Normal",
+    "k-indie": "Fairy",
     "narco rap": "Dark",
     "melodic thrash": "Steel",
     "acoustic opm": "Normal",

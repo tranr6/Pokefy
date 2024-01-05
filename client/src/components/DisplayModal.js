@@ -28,7 +28,7 @@ export default class PokemonTeam extends Component {
             <div>
                 {
                     artistsInfo.map((artist) => {
-                        return <h1>{artist.name} - {artist.type}</h1>
+                        return <h1>{artist.name} - {artist.genre} {artist.type}</h1>
                     })
                 }
 
