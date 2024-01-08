@@ -1,5 +1,5 @@
 import React from "react";
-import SpotifyLogo from "../assets/spotify.png";
+import SpotifyLogo from "../assets/images/spotify.png"
 
 const LoginButton = (props) => {
   
@@ -15,9 +15,13 @@ const LoginButton = (props) => {
   const loginLink = `${authLink}?client_id=${clientID}&redirect_uri=${redirectURI}&scope=${scope}&&response_type=${responseType}`;
 
   return (
-  <div className="breathing">
-    <a className="spotify-button" href={loginLink}><img src= {SpotifyLogo} height= "50px"></img>Login with Spotify</a>
-  </div>)
+    <div className="breathing">
+      <a className="spotify-button" href={loginLink}>
+        <img src={SpotifyLogo} alt="Spotify Logo" height="30px"></img> Login with Spotify
+      </a>
+    </div>
+  )
+  
 };
 
 export default LoginButton;

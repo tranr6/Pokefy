@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import PokifyLogo from "../assets/pokify-logo-final.png";
+import PokifyLogo from "../assets/images/pokify-logo-final.png"
 
 function NavBar({ loggedIn }) {
   const handleLogout = async () => {
@@ -20,9 +20,9 @@ function NavBar({ loggedIn }) {
   };
 
   return (
-    <div className="nav">
-      <div>
-        <Link to="/"><img src={PokifyLogo} height="100px" alt="blue and yellow pokify logo"></img></Link>
+    <nav>
+      <div className="nav-logo">
+        <img className="pokify-logo" src={PokifyLogo} alt="pokify logo in blue and yellow"></img>
       </div>
       <ul>
         <li>
@@ -33,7 +33,7 @@ function NavBar({ loggedIn }) {
         </li>
         {loggedIn ? <button onClick={handleLogout}>Log Out</button> : null}
       </ul>
-    </div>
+    </nav>
   );
 }
 
